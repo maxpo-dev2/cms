@@ -4,7 +4,6 @@ import { CalendarIcon } from "lucide-react"
 import { getOrders, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
-// Using .jsx extension to avoid TypeScript errors completely
 export default async function TicketingPage({ params }) {
   const project = await getProject(params.id)
 

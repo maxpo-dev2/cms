@@ -5,7 +5,7 @@ import { CalendarIcon, Download } from "lucide-react"
 import { getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
-export default async function AppReportsPage({ params }) {
+export default async function AttendeesReportsPage({ params }) {
   const project = await getProject(params.id)
 
   if (!project) {
@@ -16,7 +16,7 @@ export default async function AppReportsPage({ params }) {
     <div className="container py-6 space-y-8">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">App Reports</h1>
+          <h1 className="text-2xl font-bold">Attendees Reports</h1>
           <Button variant="outline" className="gap-2">
             <Download className="h-4 w-4" />
             Export Data
@@ -42,40 +42,40 @@ export default async function AppReportsPage({ params }) {
             <Tabs defaultValue="overview">
               <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="users">Users</TabsTrigger>
-                <TabsTrigger value="sessions">Sessions</TabsTrigger>
-                <TabsTrigger value="engagement">Engagement</TabsTrigger>
+                <TabsTrigger value="demographics">Demographics</TabsTrigger>
+                <TabsTrigger value="registration">Registration</TabsTrigger>
+                <TabsTrigger value="checkins">Check-ins</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard title="Total Downloads" value="1,245" change="+12%" />
-          <StatCard title="Active Users" value="876" change="+8%" />
-          <StatCard title="Session Duration" value="4m 32s" change="+5%" />
-          <StatCard title="Screen Views" value="15,678" change="+15%" />
+          <StatCard title="Total Registrations" value="1,876" change="+15%" />
+          <StatCard title="Check-in Rate" value="68%" change="+3%" />
+          <StatCard title="No-shows" value="602" change="-5%" />
+          <StatCard title="New Registrations" value="124" change="+8%" period="This week" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>User Activity</CardTitle>
+              <CardTitle>Registration Trend</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-80 w-full flex items-center justify-center text-muted-foreground">
-                User activity chart will be displayed here
+                Registration trend chart will be displayed here
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Most Viewed Screens</CardTitle>
+              <CardTitle>Check-in Statistics</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-80 w-full flex items-center justify-center text-muted-foreground">
-                Screen views chart will be displayed here
+                Check-in statistics chart will be displayed here
               </div>
             </CardContent>
           </Card>
@@ -83,7 +83,7 @@ export default async function AppReportsPage({ params }) {
 
         <Card>
           <CardHeader>
-            <CardTitle>User Demographics</CardTitle>
+            <CardTitle>Attendee Demographics</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80 w-full flex items-center justify-center text-muted-foreground">
@@ -96,7 +96,7 @@ export default async function AppReportsPage({ params }) {
   )
 }
 
-function StatCard({ title, value, change }) {
+function StatCard({ title, value, change, period }) {
   const isPositive = change.startsWith("+")
 
   return (
@@ -108,6 +108,7 @@ function StatCard({ title, value, change }) {
             <p className="text-3xl font-bold">{value}</p>
             <span className={`text-sm font-medium ${isPositive ? "text-green-600" : "text-red-600"}`}>{change}</span>
           </div>
+          {period && <p className="text-xs text-muted-foreground">{period}</p>}
         </div>
       </CardContent>
     </Card>

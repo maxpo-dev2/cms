@@ -59,7 +59,7 @@ function ProjectCard({ id, name, image, year }:Project) {
           <Bookmark className="h-4 w-4" />
         </Button>
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/projects/${id}`}>{year}</Link>
+          {year}
         </Button>
        
       </CardFooter>
