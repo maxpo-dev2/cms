@@ -45,7 +45,9 @@ export default async function ProjectsPage() {
 
 function ProjectCard({ id, name, image, year }:Project) {
   return (
+    <Link href={`/projects/${id}`}>
     <Card className="overflow-hidden">
+      
       <div className="relative h-48">
         <Image src={image || "/placeholder.svg?height=200&width=400"} alt={name} fill className="object-cover" />
       </div>
@@ -59,7 +61,10 @@ function ProjectCard({ id, name, image, year }:Project) {
         <Button variant="outline" size="sm" asChild>
           <Link href={`/projects/${id}`}>{year}</Link>
         </Button>
+       
       </CardFooter>
+      
     </Card>
+    </Link>
   )
 }

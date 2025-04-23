@@ -188,7 +188,7 @@ export default function Sidebar() {
   const allRoutes = [...routes, ...projectRoutes]
 
   return (
-    <div className="hidden md:flex md:w-64 md:flex-col h-screen bg-white border-r">
+    <div className="hidden md:flex md:w-64 md:flex-col h-screen bg-white border-r mr-7">
       <div className="flex flex-col flex-grow pt-5 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-4">
           <div className="w-10 h-10 rounded-md bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
