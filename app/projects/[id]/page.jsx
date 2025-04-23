@@ -6,9 +6,15 @@ import { Calendar, ExternalLink } from "lucide-react"
 import { getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
-// Using .jsx extension to avoid TypeScript errors completely
+
 export default async function ProjectDashboard({ params }) {
-  const project = await getProject(params.id)
+  const { id: projectId } = await params
+
+  if (!projectId) {
+    notFound()
+  }
+
+  const project = await getProject(projectId)
 
   if (!project) {
     notFound()
@@ -20,7 +26,7 @@ export default async function ProjectDashboard({ params }) {
         <div className="w-full md:w-2/3 space-y-8">
           <div className="flex justify-center">
             <Image
-              src={project.image || "/placeholder.svg?height=100&width=400"}
+              src={project.image || "/placeholder.svg"}
               alt={`${project.name} Logo`}
               width={400}
               height={100}
@@ -93,27 +99,27 @@ export default async function ProjectDashboard({ params }) {
             </CardHeader>
             <CardContent className="space-y-4">
               <QuickLink
-                href={`/projects/${params.id}/attendees`}
+                href={`/projects/${projectId}/attendees`}
                 title="Attendees"
                 description="Manage event attendees"
               />
               <QuickLink
-                href={`/projects/${params.id}/marketing`}
+                href={`/projects/${projectId}/marketing`}
                 title="Marketing"
                 description="View marketing campaigns"
               />
               <QuickLink
-                href={`/projects/${params.id}/agenda`}
+                href={`/projects/${projectId}/agenda`}
                 title="Agenda"
                 description="Manage conference schedule"
               />
               <QuickLink
-                href={`/projects/${params.id}/ticketing`}
+                href={`/projects/${projectId}/ticketing`}
                 title="Ticketing"
                 description="Manage ticket sales"
               />
-              <QuickLink href={`/projects/${params.id}/delegates`} title="Delegates" description="Manage delegates" />
-              <QuickLink href={`/projects/${params.id}/leads`} title="Leads" description="Manage sales leads" />
+              <QuickLink href={`/projects/${projectId}/delegates`} title="Delegates" description="Manage delegates" />
+              <QuickLink href={`/projects/${projectId}/leads`} title="Leads" description="Manage sales leads" />
             </CardContent>
           </Card>
         </div>
