@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash } from "lucide-react"
-import { getProject } from "@/lib/db"
+import { getExhibitors, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
 // Using .jsx extension to avoid TypeScript errors completely
@@ -14,54 +14,7 @@ export default async function ExhibitorsPage({ params }) {
     notFound()
   }
 
-  // Mock data for exhibitors
-  const exhibitors = [
-    {
-      id: "1",
-      name: "BioGen Labs",
-      image: "/placeholder.svg?height=40&width=40",
-      boothNumber: "A12",
-      category: "Biotechnology",
-      status: "Confirmed",
-      size: "10x10",
-    },
-    {
-      id: "2",
-      name: "MediTech Solutions",
-      image: "/placeholder.svg?height=40&width=40",
-      boothNumber: "B05",
-      category: "Medical Devices",
-      status: "Confirmed",
-      size: "20x10",
-    },
-    {
-      id: "3",
-      name: "GenomeWorks",
-      image: "/placeholder.svg?height=40&width=40",
-      boothNumber: "C22",
-      category: "Genomics",
-      status: "Pending",
-      size: "10x10",
-    },
-    {
-      id: "4",
-      name: "NanoHealth",
-      image: "/placeholder.svg?height=40&width=40",
-      boothNumber: "D08",
-      category: "Nanotechnology",
-      status: "Confirmed",
-      size: "15x15",
-    },
-    {
-      id: "5",
-      name: "BioInformatics Plus",
-      image: "/placeholder.svg?height=40&width=40",
-      boothNumber: "A24",
-      category: "Bioinformatics",
-      status: "Pending",
-      size: "10x10",
-    },
-  ]
+  const exhibitors = await getExhibitors(params.id)
 
   return (
     <div className="container py-6 space-y-8">

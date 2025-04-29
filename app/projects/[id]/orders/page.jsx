@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Download, Search } from "lucide-react"
-import { getProject } from "@/lib/db"
+import { Download, Pencil, Plus, Search, Trash } from "lucide-react"
+import { getOrders, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
 export default async function OrdersPage({ params }) {
@@ -13,63 +13,7 @@ export default async function OrdersPage({ params }) {
     notFound()
   }
 
-  // Mock data for orders
-  const orders = [
-    {
-      id: "ORD-12345",
-      date: "2025-04-15T10:30:00Z",
-      customer: "John Smith",
-      email: "john.smith@example.com",
-      amount: "£1,250.00",
-      status: "Paid",
-      items: "VIP Pass (2), Workshop Access (1)",
-    },
-    {
-      id: "ORD-12346",
-      date: "2025-04-15T11:45:00Z",
-      customer: "Sarah Johnson",
-      email: "sarah.johnson@example.com",
-      amount: "£750.00",
-      status: "Paid",
-      items: "Standard Pass (3)",
-    },
-    {
-      id: "ORD-12347",
-      date: "2025-04-15T13:20:00Z",
-      customer: "Michael Chen",
-      email: "michael.chen@example.com",
-      amount: "£500.00",
-      status: "Pending",
-      items: "Standard Pass (2)",
-    },
-    {
-      id: "ORD-12348",
-      date: "2025-04-15T14:10:00Z",
-      customer: "Emily Rodriguez",
-      email: "emily.rodriguez@example.com",
-      amount: "£1,000.00",
-      status: "Paid",
-      items: "VIP Pass (1), Workshop Access (2)",
-    },
-    {
-      id: "ORD-12349",
-      date: "2025-04-15T15:30:00Z",
-      customer: "David Wilson",
-      email: "david.wilson@example.com",
-      amount: "£250.00",
-      status: "Failed",
-      items: "Standard Pass (1)",
-    },
-    {
-      id: "ORD-12350",
-      date: "2025-04-15T16:45:00Z",
-      customer: "Aisha Patel",
-      email: "aisha.patel@example.com",
-      amount: "£0.00",
-      status: "Completed",
-      items: "Free Pass (1)",
-    },
-  ]
+  const orders = await getOrders(params.id)
 
   return (
     <div className="container py-6 space-y-8">
@@ -81,14 +25,18 @@ export default async function OrdersPage({ params }) {
             <p className="text-sm font-medium">Search:</p>
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="Search by order ID or customer" className="pl-8" />
+              <Input type="search" placeholder="Search by order number or customer" className="pl-8" />
             </div>
           </div>
 
           <div className="flex items-end gap-2">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Order
+            </Button>
             <Button variant="outline" className="gap-2">
               <Download className="h-4 w-4" />
-              Export Orders
+              Export CSV
             </Button>
           </div>
         </div>
@@ -97,45 +45,50 @@ export default async function OrdersPage({ params }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Order Number</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Items</TableHead>
+                <TableHead>Payment Method</TableHead>
+                <TableHead>Date</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{new Date(order.date).toLocaleString()}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.email}</TableCell>
-                  <TableCell>{order.amount}</TableCell>
+                  <TableCell>{order.orderNumber}</TableCell>
+                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell>{order.customerEmail}</TableCell>
+                  <TableCell>
+                    {project.currency} {order.amount.toFixed(2)}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
                       className={
-                        order.status === "Paid"
+                        order.status === "Completed"
                           ? "bg-green-100 text-green-800 hover:bg-green-100"
                           : order.status === "Pending"
                             ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                            : order.status === "Failed"
-                              ? "bg-red-100 text-red-800 hover:bg-red-100"
-                              : "bg-blue-100 text-blue-800 hover:bg-blue-100"
+                            : "bg-red-100 text-red-800 hover:bg-red-100"
                       }
                     >
                       {order.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{order.items}</TableCell>
+                  <TableCell>{order.paymentMethod}</TableCell>
+                  <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

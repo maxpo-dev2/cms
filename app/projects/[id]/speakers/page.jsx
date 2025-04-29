@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash } from "lucide-react"
-import { getProject } from "@/lib/db"
+import { getSpeakers, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
 // Using .jsx extension to avoid TypeScript errors completely
@@ -14,59 +14,7 @@ export default async function SpeakersPage({ params }) {
     notFound()
   }
 
-  // Mock data for speakers
-  const speakers = [
-    {
-      id: "1",
-      name: "Dr. Sarah Johnson",
-      image: "/placeholder.svg?height=40&width=40",
-      company: "BioGen Research",
-      position: "Chief Scientific Officer",
-      bio: "Leading researcher in genomics with over 20 years of experience in biotechnology.",
-      featured: true,
-      sessions: ["Opening Keynote", "Genomics Panel"],
-    },
-    {
-      id: "2",
-      name: "Prof. Michael Chen",
-      image: "/placeholder.svg?height=40&width=40",
-      company: "Cambridge University",
-      position: "Professor of Biotechnology",
-      bio: "Award-winning academic specializing in synthetic biology and bioethics.",
-      featured: true,
-      sessions: ["Future of Synthetic Biology"],
-    },
-    {
-      id: "3",
-      name: "Dr. Emily Rodriguez",
-      image: "/placeholder.svg?height=40&width=40",
-      company: "Pharma Innovations",
-      position: "Head of R&D",
-      bio: "Pioneer in pharmaceutical research with focus on RNA therapeutics.",
-      featured: false,
-      sessions: ["Drug Development Workshop", "RNA Therapeutics Panel"],
-    },
-    {
-      id: "4",
-      name: "James Wilson",
-      image: "/placeholder.svg?height=40&width=40",
-      company: "BioTech Ventures",
-      position: "Managing Partner",
-      bio: "Venture capitalist with expertise in funding early-stage biotech startups.",
-      featured: false,
-      sessions: ["Investment Strategies in Biotech"],
-    },
-    {
-      id: "5",
-      name: "Dr. Aisha Patel",
-      image: "/placeholder.svg?height=40&width=40",
-      company: "Global Health Initiative",
-      position: "Director of Research",
-      bio: "Specializes in infectious disease research and global health policy.",
-      featured: true,
-      sessions: ["Global Health Challenges", "Pandemic Preparedness"],
-    },
-  ]
+  const speakers = await getSpeakers(params.id)
 
   return (
     <div className="container py-6 space-y-8">

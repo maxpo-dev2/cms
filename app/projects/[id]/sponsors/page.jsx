@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash } from "lucide-react"
-import { getProject } from "@/lib/db"
+import { getSponsors, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
 // Using .jsx extension to avoid TypeScript errors completely
@@ -14,54 +14,7 @@ export default async function SponsorsPage({ params }) {
     notFound()
   }
 
-  // Mock data for sponsors
-  const sponsors = [
-    {
-      id: "1",
-      name: "BioTech Global",
-      image: "/placeholder.svg?height=40&width=40",
-      level: "Platinum",
-      amount: "£50,000",
-      status: "Confirmed",
-      benefits: "Main stage branding, 5 VIP passes, keynote slot",
-    },
-    {
-      id: "2",
-      name: "MediCorp International",
-      image: "/placeholder.svg?height=40&width=40",
-      level: "Gold",
-      amount: "£25,000",
-      status: "Confirmed",
-      benefits: "Logo on all materials, 3 VIP passes, workshop slot",
-    },
-    {
-      id: "3",
-      name: "GeneTech Labs",
-      image: "/placeholder.svg?height=40&width=40",
-      level: "Silver",
-      amount: "£15,000",
-      status: "Pending",
-      benefits: "Logo on website, 2 VIP passes",
-    },
-    {
-      id: "4",
-      name: "Pharma Solutions",
-      image: "/placeholder.svg?height=40&width=40",
-      level: "Bronze",
-      amount: "£7,500",
-      status: "Confirmed",
-      benefits: "Logo on website, 1 VIP pass",
-    },
-    {
-      id: "5",
-      name: "BioInnovate",
-      image: "/placeholder.svg?height=40&width=40",
-      level: "Gold",
-      amount: "£25,000",
-      status: "Pending",
-      benefits: "Logo on all materials, 3 VIP passes, workshop slot",
-    },
-  ]
+  const sponsors = await getSponsors(params.id)
 
   return (
     <div className="container py-6 space-y-8">

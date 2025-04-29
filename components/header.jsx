@@ -79,10 +79,10 @@ export default function Header() {
           2025
         </Button>
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium">Mir Mateen</span>
+          <span className="text-sm font-medium">Maxpo</span>
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder.svg?height=32&width=32" alt="@username" />
-            <AvatarFallback>MM</AvatarFallback>
+            <AvatarFallback>M</AvatarFallback>
           </Avatar>
         </div>
       </div>

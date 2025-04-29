@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Download, Pencil, Plus, Search, Trash } from "lucide-react"
-import { getProject } from "@/lib/db"
+import { getMediaPartners, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
 // Using .jsx extension to avoid TypeScript errors completely
@@ -13,49 +13,7 @@ export default async function MediaPartnersPage({ params }) {
     notFound()
   }
 
-  // Mock data for media partners
-  const mediaPartners = [
-    {
-      id: "1",
-      name: "Tech Today",
-      image: "/placeholder.svg?height=40&width=40",
-      website: "https://techtoday.com",
-      type: "Online",
-      priority: 10,
-    },
-    {
-      id: "2",
-      name: "BioTech News",
-      image: "/placeholder.svg?height=40&width=40",
-      website: "https://biotechnews.com",
-      type: "Print",
-      priority: 8,
-    },
-    {
-      id: "3",
-      name: "Science Daily",
-      image: "/placeholder.svg?height=40&width=40",
-      website: "https://sciencedaily.com",
-      type: "Online",
-      priority: 9,
-    },
-    {
-      id: "4",
-      name: "Innovation Magazine",
-      image: "/placeholder.svg?height=40&width=40",
-      website: "https://innovationmag.com",
-      type: "Print",
-      priority: 7,
-    },
-    {
-      id: "5",
-      name: "Research Weekly",
-      image: "/placeholder.svg?height=40&width=40",
-      website: "https://researchweekly.com",
-      type: "Online",
-      priority: 6,
-    },
-  ]
+  const mediaPartners = await getMediaPartners(params.id)
 
   return (
     <div className="container py-6 space-y-8">

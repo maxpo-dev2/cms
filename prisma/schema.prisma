@@ -1,0 +1,351 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  venue       String?
+  website     String?
+  image       String?
+  year        String
+  currency    String?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  stats           ProjectStats?
+  attendees       Attendee[]
+  delegates       Delegate[]
+  speakers        Speaker[]
+  marketingCampaigns MarketingCampaign[]
+  leads           Lead[]
+  sessions        Session[]
+  exhibitors      Exhibitor[]
+  sponsors        Sponsor[]
+  partners        Partner[]
+  mediaPartners   MediaPartner[]
+  orders          Order[]
+  enquiries       Enquiry[]
+  utmData         UtmData[]
+  agendaDays      AgendaDay[]
+}
+
+model ProjectStats {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  speakers    Int      @default(0)
+  partners    Int      @default(0)
+  mediaPartners Int    @default(0)
+  sponsors    Int      @default(0)
+  exhibitors  Int      @default(0)
+  delegates   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @unique @db.ObjectId
+}
+
+model Attendee {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  jobTitle    String?
+  checkedIn   Boolean  @default(false)
+  checkinTime DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Delegate {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String?
+  phone       String?
+  company     String?
+  jobTitle    String?
+  address     String?
+  booth       String?
+  status      String?
+  description String?
+  priority    Int      @default(0)
+  featured    Boolean  @default(false)
+  type        String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Speaker {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String?
+  phone       String?
+  company     String?
+  position    String?
+  bio         String?
+  featured    Boolean  @default(false)
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+  
+  // Many-to-many relation with AgendaItem
+  agendaItems AgendaItemSpeaker[]
+}
+
+model MarketingCampaign {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  type        String
+  total       Int      @default(0)
+  revenue     Float    @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Lead {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String
+  contact       String?
+  company       String?
+  type          String?
+  date          DateTime?
+  qualifyStatus String?
+  salesStatus   String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId     String   @db.ObjectId
+}
+
+model Session {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  startTime   String
+  endTime     String
+  date        DateTime?
+  venue       String?
+  day         Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Exhibitor {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  image       String?
+  boothNumber String?
+  category    String?
+  status      String?
+  size        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Sponsor {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  image       String?
+  level       String
+  amount      String?
+  status      String?
+  benefits    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Partner {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  image       String?
+  type        String?
+  website     String?
+  status      String?
+  contribution String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model MediaPartner {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  image       String?
+  website     String?
+  type        String?
+  priority    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Order {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber String
+  customerName String
+  customerEmail String
+  amount      Float
+  status      String
+  paymentMethod String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Enquiry {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String
+  phone       String?
+  subject     String?
+  message     String
+  status      String   @default("New")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model UtmData {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  source      String?
+  medium      String?
+  campaign    String?
+  term        String?
+  content     String?
+  visits      Int      @default(0)
+  conversions Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+// New models for the agenda system
+model AgendaDay {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   // e.g., "Day One"
+  date        DateTime
+  dayNumber   Int      // e.g., 1, 2, 3
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+  
+  // One-to-many relation with AgendaSession
+  sessions    AgendaSession[]
+}
+
+model AgendaSession {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   // e.g., "Official Opening & Keynotes"
+  startTime   String   // e.g., "10:00"
+  endTime     String   // e.g., "10:15"
+  color       String?  // e.g., "#0047AB" for the blue background
+  venue       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  day         AgendaDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId       String    @db.ObjectId
+  
+  // One-to-many relation with AgendaItem
+  items       AgendaItem[]
+}
+
+model AgendaItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   // e.g., "Opening Address"
+  startTime   String   // e.g., "10:00"
+  endTime     String   // e.g., "10:05"
+  type        String   // e.g., "Keynote", "Presentation", "Panel Discussion", "Q&A"
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  session     AgendaSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String        @db.ObjectId
+  
+  // Many-to-many relation with Speaker
+  speakers    AgendaItemSpeaker[]
+}
+
+model AgendaItemSpeaker {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  // Relations
+  agendaItem  AgendaItem @relation(fields: [agendaItemId], references: [id], onDelete: Cascade)
+  agendaItemId String    @db.ObjectId
+  
+  speaker     Speaker   @relation(fields: [speakerId], references: [id], onDelete: Cascade)
+  speakerId   String    @db.ObjectId
+
+  @@unique([agendaItemId, speakerId])
+}

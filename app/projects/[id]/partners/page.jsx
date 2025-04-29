@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash } from "lucide-react"
-import { getProject } from "@/lib/db"
+import { getPartners, getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
 // Using .jsx extension to avoid TypeScript errors completely
@@ -14,54 +14,7 @@ export default async function PartnersPage({ params }) {
     notFound()
   }
 
-  // Mock data for partners
-  const partners = [
-    {
-      id: "1",
-      name: "London BioTech Association",
-      image: "/placeholder.svg?height=40&width=40",
-      type: "Industry Association",
-      website: "https://lba.org",
-      status: "Active",
-      contribution: "Speaker referrals, industry promotion",
-    },
-    {
-      id: "2",
-      name: "UK Research Council",
-      image: "/placeholder.svg?height=40&width=40",
-      type: "Government",
-      website: "https://ukrc.gov.uk",
-      status: "Active",
-      contribution: "Research showcase, funding opportunities",
-    },
-    {
-      id: "3",
-      name: "European BioTech Network",
-      image: "/placeholder.svg?height=40&width=40",
-      type: "Network",
-      website: "https://ebn.eu",
-      status: "Pending",
-      contribution: "International delegate connections",
-    },
-    {
-      id: "4",
-      name: "BioStartup Accelerator",
-      image: "/placeholder.svg?height=40&width=40",
-      type: "Accelerator",
-      website: "https://biostartup.co",
-      status: "Active",
-      contribution: "Startup showcase, mentorship sessions",
-    },
-    {
-      id: "5",
-      name: "Global Health Initiative",
-      image: "/placeholder.svg?height=40&width=40",
-      type: "NGO",
-      website: "https://globalhealth.org",
-      status: "Active",
-      contribution: "Policy discussions, global health panel",
-    },
-  ]
+  const partners = await getPartners(params.id)
 
   return (
     <div className="container py-6 space-y-8">
