@@ -2,31 +2,15 @@ import prisma from "./prisma"
 
 // Projects
 export async function getProjects() {
-  console.log("getProjects function called")
   try {
-    // Log database connection status
-    console.log("Database URL configured:", !!process.env.DATABASE_URL)
-    
-    // Attempt to fetch projects
     const projects = await prisma.project.findMany({
       orderBy: {
         createdAt: "desc",
       },
     })
-    
-    console.log(`Successfully fetched ${projects.length} projects`)
     return projects
   } catch (error) {
-    // Log detailed error information
     console.error("Database Error:", error)
-    
-    // In production, return empty array instead of throwing
-    // This prevents the page from crashing
-    if (process.env.NODE_ENV === "production") {
-      console.log("Returning empty array due to error in production")
-      return []
-    }
-    
     throw new Error("Failed to fetch projects")
   }
 }
