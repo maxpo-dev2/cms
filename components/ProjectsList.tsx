@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Bookmark, Plus, Loader2 } from "lucide-react"
-import Image from "next/image"
+// import Image from "next/image"
 import Link from "next/link"
 
 function ProjectsLoading() {
@@ -18,13 +18,13 @@ function ProjectsLoading() {
   )
 }
 
-function ProjectCard({ id, name, image, year }: { id: string; name: string; image: string; year: string }) {
+function ProjectCard({ id, name, year }: { id: string; name: string; year: string }) {
   return (
     <Card className="overflow-hidden">
       <Link href={`/projects/${id}`}>
-        <div className="relative h-48">
-          <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" />
-        </div>
+        {/* <div className="relative h-48">
+          {/* <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" /> 
+        </div> */}
         <CardContent className="p-4">
           <h3 className="font-semibold">{name}</h3>
         </CardContent>
@@ -85,7 +85,7 @@ export function ProjectsList() {
           key={project.id}
           id={project.id}
           name={project.name}
-          image={project.image || "/placeholder.svg?height=200&width=400"}
+        //   image={project.image || "/placeholder.svg?height=200&width=400"}
           year={project.year}
         />
       ))}

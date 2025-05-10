@@ -9,7 +9,7 @@ export default function ProjectsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Projects</h1>
         <Button asChild>
-          <Link href="/projects/new">
+          <Link href="/new">
             <Plus className="mr-2 h-4 w-4" />
             Create New Project
           </Link>
