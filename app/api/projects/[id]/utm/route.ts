@@ -23,15 +23,25 @@ export async function POST(request: Request, { params }: { params: { id: string 
   try {
     const body = await request.json()
 
+    // Validate required fields
+    if (!body.source || !body.medium || !body.campaign || !body.websiteUrl || !body.name) {
+      return NextResponse.json(
+        { error: "Missing required fields: source, medium, campaign, websiteUrl, and name are required" },
+        { status: 400 },
+      )
+    }
+
     const utmData = await prisma.utmData.create({
       data: {
+        name: body.name,
+        websiteUrl: body.websiteUrl,
         source: body.source,
         medium: body.medium,
         campaign: body.campaign,
-        term: body.term,
-        content: body.content,
-        visits: body.visits || 0,
-        conversions: body.conversions || 0,
+        term: body.term || null,
+        content: body.content || null,
+        visits: 0,
+        conversions: 0,
         project: {
           connect: {
             id: params.id,

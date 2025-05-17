@@ -1,14 +1,55 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CalendarIcon } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export default function TicketingPage() {
+  const [stats, setStats] = useState({
+    revenue: 0,
+    total: 0,
+    paid: 0,
+    incomplete: 0,
+    complete: 0,
+    free: 0,
+  })
+  const [loading, setLoading] = useState(true)
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch("fetch(`/api/projects/${projectId}/orders/stats?id=${projectId}`)")
+        if (response.ok) {
+          const data = await response.json()
+          setStats(data)
+        } else {
+          console.error("Failed to fetch stats")
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [])
+
   return (
     <div className="container py-6 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-5xl font-bold text-center">£66,599.20</h1>
+      <h1 className="text-5xl font-bold text-center">
+  {loading || stats.revenue === undefined ? (
+    <div className="h-12 w-48 bg-gray-200 animate-pulse rounded mx-auto"></div>
+  ) : (
+    `£${stats.revenue.toFixed(2)}`
+  )}
+</h1>
         <p className="text-center text-muted-foreground">
-          * Revenue from event website orders and direct payment links from orzel
+          * Revenue from event website orders and direct payment links
         </p>
 
         <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
@@ -16,7 +57,7 @@ export default function TicketingPage() {
             <p className="text-sm font-medium">Start Date</p>
             <Button variant="outline" className="w-full justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
-              Choose Date
+              {startDate ? startDate.toLocaleDateString() : "Choose Date"}
             </Button>
           </div>
 
@@ -24,7 +65,7 @@ export default function TicketingPage() {
             <p className="text-sm font-medium">End Date</p>
             <Button variant="outline" className="w-full justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
-              Choose Date
+              {endDate ? endDate.toLocaleDateString() : "Choose Date"}
             </Button>
           </div>
         </div>
@@ -32,11 +73,11 @@ export default function TicketingPage() {
         <div className="mt-12">
           <h2 className="text-xl font-semibold mb-4">Orders</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <OrderStatCard title="Total" value="914" />
-            <OrderStatCard title="Paid" value="67" />
-            <OrderStatCard title="Incomplete" value="471" />
-            <OrderStatCard title="Complete" value="443" />
-            <OrderStatCard title="Free" value="376" className="md:col-span-4 lg:col-span-1" />
+            <OrderStatCard title="Total" value={stats.total} className="" />
+            <OrderStatCard title="Paid" value={stats.paid} className="" />
+            <OrderStatCard title="Incomplete" value={stats.incomplete} className="" />
+            <OrderStatCard title="Complete" value={stats.complete} className="" />
+            <OrderStatCard title="Free" value={stats.free} className="md:col-span-4 lg:col-span-1" />
           </div>
         </div>
 
@@ -82,7 +123,7 @@ export default function TicketingPage() {
   )
 }
 
-function OrderStatCard({ title, value, className }: { title: string; value: string; className?: string }) {
+function OrderStatCard({ title, value, className }: { title: string; value: number; className: string }) {
   return (
     <Card className={className}>
       <CardContent className="p-6">

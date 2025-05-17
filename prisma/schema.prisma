@@ -39,6 +39,7 @@ model Project {
   orders          Order[]
   enquiries       Enquiry[]
   utmData         UtmData[]
+  tickets         Ticket[]
   agendaDays      AgendaDay[]
 }
 
@@ -268,6 +269,8 @@ model Enquiry {
 
 model UtmData {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  websiteUrl  String?
   source      String?
   medium      String?
   campaign    String?
@@ -275,6 +278,27 @@ model UtmData {
   content     String?
   visits      Int      @default(0)
   conversions Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.ObjectId
+}
+
+model Ticket {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  price       Float
+  currency    String   @default("USD")
+  type        String   // e.g., "Early Bird", "Regular", "VIP"
+  category    String?  // e.g., "Conference", "Workshop", "Gala"
+  available   Int      @default(0)
+  sold        Int      @default(0)
+  validFrom   DateTime?
+  validUntil  DateTime?
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
