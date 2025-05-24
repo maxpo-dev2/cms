@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const sponsors = await prisma.sponsor.findMany({
       where: {
-        projectId: params.id,
+        projectId: id,
       },
       orderBy: {
         level: "desc",
@@ -13,14 +14,15 @@ export async function GET(request: Request, { params }: { params: { id: string }
     })
 
     return NextResponse.json(sponsors)
-  } catch (error) {
-    console.error("Error fetching sponsors:", error)
+  } catch (err) {
+    console.error("Error fetching sponsors:", err || "Unknown error")
     return NextResponse.json({ error: "Failed to fetch sponsors" }, { status: 500 })
   }
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const body = await request.json()
 
     const sponsor = await prisma.sponsor.create({
@@ -33,15 +35,15 @@ export async function POST(request: Request, { params }: { params: { id: string 
         benefits: body.benefits,
         project: {
           connect: {
-            id: params.id,
+            id: id,
           },
         },
       },
     })
 
     return NextResponse.json(sponsor, { status: 201 })
-  } catch (error) {
-    console.error("Error creating sponsor:", error)
+  } catch (err) {
+    console.error("Error creating sponsor:", err || "Unknown error")
     return NextResponse.json({ error: "Failed to create sponsor" }, { status: 500 })
   }
 }
