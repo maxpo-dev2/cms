@@ -1,39 +1,36 @@
-"use client"
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import Sidebar from "@/components/sidebar"
+import Header from "@/components/header"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LogOut } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+const inter = Inter({ subsets: ["latin"] })
 
-export default function LogoutPage() {
-  const router = useRouter()
+export const metadata: Metadata = {
+  title: "Event CRM",
+  description: "Event Management CRM System",
+}
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    // For now, just redirect to home
-    router.push("/")
-  }
-
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <div className="container py-6 max-w-md mx-auto">
-      <Card>
-        <CardHeader className="text-center">
-          <LogOut className="mx-auto h-12 w-12 text-muted-foreground" />
-          <CardTitle>Logout</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-center text-muted-foreground">Are you sure you want to logout?</p>
-          <div className="flex space-x-2">
-            <Button variant="outline" className="flex-1" asChild>
-              <Link href="/">Cancel</Link>
-            </Button>
-            <Button onClick={handleLogout} className="flex-1">
-              Logout
-            </Button>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex flex-col flex-1 overflow-hidden">
+              <Header />
+              <main className="flex-1 overflow-y-auto bg-background">{children}</main>
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }
