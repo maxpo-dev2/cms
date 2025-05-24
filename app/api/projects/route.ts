@@ -10,8 +10,8 @@ export async function GET() {
     })
 
     return NextResponse.json(projects)
-  } catch (error) {
-    console.error("Error fetching projects:", error)
+  } catch (err) {
+    console.error("Error fetching projects:", err || "Unknown error")
     return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 })
   }
 }
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json(project, { status: 201 })
-  } catch (error) {
-    console.error("Error creating project:", error)
+  } catch (err) {
+    console.error("Error creating project:", err || "Unknown error")
     return NextResponse.json({ error: "Failed to create project" }, { status: 500 })
   }
 }
