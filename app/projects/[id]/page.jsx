@@ -6,9 +6,9 @@ import { Calendar, ExternalLink } from "lucide-react"
 import { getProject } from "@/lib/db"
 import { notFound } from "next/navigation"
 
-// Using .jsx extension to avoid TypeScript errors completely
 export default async function ProjectDashboard({ params }) {
-  const project = await getProject(params.id)
+  const resolvedParams = await params
+  const project = await getProject(resolvedParams.id)
 
   if (!project) {
     notFound()
@@ -25,6 +25,7 @@ export default async function ProjectDashboard({ params }) {
               width={400}
               height={100}
               className="h-24 w-auto object-contain"
+              priority
             />
           </div>
 
@@ -36,13 +37,13 @@ export default async function ProjectDashboard({ params }) {
                 {project.startDate && (
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>Start: {new Date(project.startDate).toLocaleString()}</span>
+                    <span>Start: {new Date(project.startDate).toLocaleDateString()}</span>
                   </div>
                 )}
                 {project.endDate && (
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>End: {new Date(project.endDate).toLocaleString()}</span>
+                    <span>End: {new Date(project.endDate).toLocaleDateString()}</span>
                   </div>
                 )}
               </div>
@@ -76,12 +77,12 @@ export default async function ProjectDashboard({ params }) {
 
           {project.stats && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <StatCard title="Speakers" value={project.stats.speakers.toString()} />
-              <StatCard title="Partners" value={project.stats.partners.toString()} />
-              <StatCard title="Media Partners" value={project.stats.mediaPartners.toString()} />
-              <StatCard title="Sponsors" value={project.stats.sponsors.toString()} />
-              <StatCard title="Exhibitors" value={project.stats.exhibitors.toString()} />
-              <StatCard title="Delegates" value={project.stats.delegates.toString()} />
+              <StatCard title="Speakers" value={project.stats.speakers?.toString() || "0"} />
+              <StatCard title="Partners" value={project.stats.partners?.toString() || "0"} />
+              <StatCard title="Media Partners" value={project.stats.mediaPartners?.toString() || "0"} />
+              <StatCard title="Sponsors" value={project.stats.sponsors?.toString() || "0"} />
+              <StatCard title="Exhibitors" value={project.stats.exhibitors?.toString() || "0"} />
+              <StatCard title="Delegates" value={project.stats.delegates?.toString() || "0"} />
             </div>
           )}
         </div>
@@ -93,27 +94,31 @@ export default async function ProjectDashboard({ params }) {
             </CardHeader>
             <CardContent className="space-y-4">
               <QuickLink
-                href={`/projects/${params.id}/attendees`}
+                href={`/projects/${resolvedParams.id}/attendees`}
                 title="Attendees"
                 description="Manage event attendees"
               />
               <QuickLink
-                href={`/projects/${params.id}/marketing`}
+                href={`/projects/${resolvedParams.id}/marketing`}
                 title="Marketing"
                 description="View marketing campaigns"
               />
               <QuickLink
-                href={`/projects/${params.id}/agenda`}
+                href={`/projects/${resolvedParams.id}/agenda`}
                 title="Agenda"
                 description="Manage conference schedule"
               />
               <QuickLink
-                href={`/projects/${params.id}/ticketing`}
+                href={`/projects/${resolvedParams.id}/ticketing`}
                 title="Ticketing"
                 description="Manage ticket sales"
               />
-              <QuickLink href={`/projects/${params.id}/delegates`} title="Delegates" description="Manage delegates" />
-              <QuickLink href={`/projects/${params.id}/leads`} title="Leads" description="Manage sales leads" />
+              <QuickLink
+                href={`/projects/${resolvedParams.id}/delegates`}
+                title="Delegates"
+                description="Manage delegates"
+              />
+              <QuickLink href={`/projects/${resolvedParams.id}/leads`} title="Leads" description="Manage sales leads" />
             </CardContent>
           </Card>
         </div>

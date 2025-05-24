@@ -3,10 +3,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 
-// Using .jsx extension to avoid TypeScript errors completely
 export default function Header() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Format the pathname for breadcrumbs
   const formatPathname = (path) => {
@@ -21,6 +26,8 @@ export default function Header() {
 
   // Generate breadcrumb items
   const generateBreadcrumbs = () => {
+    if (!mounted) return [{ href: "/", label: "Projects" }]
+
     const paths = pathname.split("/").filter(Boolean)
 
     // If we're in a project context
@@ -63,6 +70,20 @@ export default function Header() {
 
   const breadcrumbs = generateBreadcrumbs()
 
+  if (!mounted) {
+    return (
+      <header className="sticky top-0 z-10 flex items-center justify-between h-16 px-4 border-b bg-background">
+        <div className="flex items-center space-x-4">
+          <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="h-8 w-16 bg-muted animate-pulse rounded" />
+          <div className="h-8 w-8 bg-muted animate-pulse rounded-full" />
+        </div>
+      </header>
+    )
+  }
+
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between h-16 px-4 border-b bg-background">
       <div className="flex items-center space-x-4">
@@ -79,10 +100,10 @@ export default function Header() {
           2025
         </Button>
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium">Maxpo</span>
+          <span className="text-sm font-medium">Mir Mateen</span>
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder.svg?height=32&width=32" alt="@username" />
-            <AvatarFallback>M</AvatarFallback>
+            <AvatarFallback>MM</AvatarFallback>
           </Avatar>
         </div>
       </div>
