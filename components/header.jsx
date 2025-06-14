@@ -103,7 +103,7 @@ export default function Header() {
           <span className="text-sm font-medium">Admin</span>
           <Avatar className="h-8 w-8">
             <AvatarImage src="" alt="@username" />
-            <AvatarFallback className="bg-muted p-1">MM</AvatarFallback>
+            <AvatarFallback className="bg-sky-500 p-1">A</AvatarFallback>
           </Avatar>
         </div>
       </div>

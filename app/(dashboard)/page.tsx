@@ -59,7 +59,6 @@ export default async function ProjectsPage() {
                 id={project.id}
                 name={project.name}
                 description={project.description}
-                image={project.image}
                 year={project.year}
               />
             ))}
