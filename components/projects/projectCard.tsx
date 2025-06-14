@@ -1,55 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Bookmark } from "lucide-react";
-import FallBackImage from "@/public/placeholder.jpg";
-import { useRouter } from "next/navigation";
 
 export function ProjectCard({
   id,
   name,
-  image,
   year,
   description,
 }: {
   id: string;
   name: string;
-  image: string;
   year: string;
   description: string;
 }) {
-  const [imgSrc, setImgSrc] = useState(image || FallBackImage);
   const router = useRouter();
+
   return (
     <Card
-      className="overflow-hidden cursor-pointer"
-      onClick={() => {
-        router.push(`/projects/${id}`);
-      }}
+      onClick={() => router.push(`/projects/${id}`)}
+      className="cursor-pointer rounded-2xl border border-gray-200 p-4 shadow-sm transition duration-300 hover:shadow-md hover:border-blue-500 group"
     >
-      {/* <div className="relative h-48">
-        <Image
-          src={imgSrc}
-          alt={name}
-          fill
-          className="object-cover"
-          onError={() => setImgSrc(FallBackImage)}
-        />
-      </div> */}
-      <CardContent className="p-4">
-        <h2 className="font-semibold">{name}</h2>
-        <p className="text-gray-500 tex-[10px] truncate ">{description}</p>
+      <CardContent className="space-y-2 pb-0">
+        <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition">
+          {name}
+        </h2>
+        <p className="text-sm text-gray-600 line-clamp-3">
+          {description}
+        </p>
       </CardContent>
-      <CardFooter className="flex justify-between p-4 pt-0">
-        {/* <Button variant="outline" size="icon" className="rounded-full h-8 w-8">
-          <Bookmark className="h-4 w-4" />
-        </Button> */}
-        <Button variant="outline" size="sm" asChild>
-          <p>{year}</p>
+
+      <CardFooter className="pt-4 flex justify-between items-center">
+        <span className="inline-block text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
+          {year}
+        </span>
+
+        <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 px-2">
+          View
         </Button>
       </CardFooter>
     </Card>

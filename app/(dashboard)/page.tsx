@@ -18,7 +18,6 @@ export default async function ProjectsPage() {
 
   // Ensure projects is always an array
   const safeProjects = Array.isArray(projects) ? projects : []
-
   return (
     <div className="container py-6 space-y-8">
       <div className="flex justify-between items-center">
