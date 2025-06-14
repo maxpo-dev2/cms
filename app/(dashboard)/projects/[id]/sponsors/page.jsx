@@ -6,44 +6,45 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 
-export default function ExhibitorsPage({ params }) {
+export default function SponsorsPage({ params }) {
   const resolvedParams = React.use(params)
-  const [exhibitors, setExhibitors] = useState([])
+  const [sponsors, setSponsors] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingExhibitor, setEditingExhibitor] = useState(null)
+  const [editingSponsor, setEditingSponsor] = useState(null)
   const [formData, setFormData] = useState({
     name: "",
     image: "",
-    boothNumber: "",
-    category: "",
+    level: "",
+    amount: "",
     status: "",
-    size: "",
+    benefits: "",
   })
   const { toast } = useToast()
 
   useEffect(() => {
-    fetchExhibitors()
+    fetchSponsors()
   }, [])
 
-  const fetchExhibitors = async () => {
+  const fetchSponsors = async () => {
     try {
-      const response = await fetch(`/api/projects/${resolvedParams.id}/exhibitors`)
+      const response = await fetch(`/api/projects/${resolvedParams.id}/sponsors`)
       if (response.ok) {
         const data = await response.json()
-        setExhibitors(data)
+        setSponsors(data)
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch exhibitors",
+        description: "Failed to fetch sponsors",
         variant: "destructive",
       })
     } finally {
@@ -54,31 +55,34 @@ export default function ExhibitorsPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingExhibitor
-        ? `/api/projects/${resolvedParams.id}/exhibitors/${editingExhibitor.id}`
-        : `/api/projects/${resolvedParams.id}/exhibitors`
+      const url = editingSponsor
+        ? `/api/projects/${resolvedParams.id}/sponsors/${editingSponsor.id}`
+        : `/api/projects/${resolvedParams.id}/sponsors`
 
-      const method = editingExhibitor ? "PUT" : "POST"
+      const method = editingSponsor ? "PUT" : "POST"
 
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          amount: formData.amount ? Number.parseFloat(formData.amount) : 0,
+        }),
       })
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: `Exhibitor ${editingExhibitor ? "updated" : "created"} successfully`,
+          description: `Sponsor ${editingSponsor ? "updated" : "created"} successfully`,
         })
         setIsDialogOpen(false)
-        setEditingExhibitor(null)
+        setEditingSponsor(null)
         resetForm()
-        fetchExhibitors()
+        fetchSponsors()
       } else {
-        throw new Error("Failed to save exhibitor")
+        throw new Error("Failed to save sponsor")
       }
     } catch (error) {
       toast({
@@ -89,35 +93,35 @@ export default function ExhibitorsPage({ params }) {
     }
   }
 
-  const handleEdit = (exhibitor) => {
-    setEditingExhibitor(exhibitor)
+  const handleEdit = (sponsor) => {
+    setEditingSponsor(sponsor)
     setFormData({
-      name: exhibitor.name || "",
-      image: exhibitor.image || "",
-      boothNumber: exhibitor.boothNumber || "",
-      category: exhibitor.category || "",
-      status: exhibitor.status || "",
-      size: exhibitor.size || "",
+      name: sponsor.name || "",
+      image: sponsor.image || "",
+      level: sponsor.level || "",
+      amount: sponsor.amount?.toString() || "",
+      status: sponsor.status || "",
+      benefits: sponsor.benefits || "",
     })
     setIsDialogOpen(true)
   }
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this exhibitor?")) return
+    if (!confirm("Are you sure you want to delete this sponsor?")) return
 
     try {
-      const response = await fetch(`/api/projects/${resolvedParams.id}/exhibitors/${id}`, {
+      const response = await fetch(`/api/projects/${resolvedParams.id}/sponsors/${id}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Exhibitor deleted successfully",
+          description: "Sponsor deleted successfully",
         })
-        fetchExhibitors()
+        fetchSponsors()
       } else {
-        throw new Error("Failed to delete exhibitor")
+        throw new Error("Failed to delete sponsor")
       }
     } catch (error) {
       toast({
@@ -132,24 +136,23 @@ export default function ExhibitorsPage({ params }) {
     setFormData({
       name: "",
       image: "",
-      boothNumber: "",
-      category: "",
+      level: "",
+      amount: "",
       status: "",
-      size: "",
+      benefits: "",
     })
   }
 
   const handleAddNew = () => {
-    setEditingExhibitor(null)
+    setEditingSponsor(null)
     resetForm()
     setIsDialogOpen(true)
   }
 
-  const filteredExhibitors = exhibitors.filter(
-    (exhibitor) =>
-      exhibitor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      exhibitor.boothNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      exhibitor.category?.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredSponsors = sponsors.filter(
+    (sponsor) =>
+      sponsor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sponsor.level?.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   if (loading) {
@@ -159,7 +162,7 @@ export default function ExhibitorsPage({ params }) {
   return (
     <div className="container py-6 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Exhibitors</h1>
+        <h1 className="text-2xl font-bold">Sponsors</h1>
 
         <div className="flex flex-col sm:flex-row justify-between gap-4">
           <div className="space-y-2 w-full sm:w-auto">
@@ -168,7 +171,7 @@ export default function ExhibitorsPage({ params }) {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by name or booth"
+                placeholder="Search by name or level"
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -181,12 +184,12 @@ export default function ExhibitorsPage({ params }) {
               <DialogTrigger asChild>
                 <Button onClick={handleAddNew} className="gap-2">
                   <Plus className="h-4 w-4" />
-                  Add Exhibitor
+                  Add Sponsor
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>{editingExhibitor ? "Edit Exhibitor" : "Add New Exhibitor"}</DialogTitle>
+                  <DialogTitle>{editingSponsor ? "Edit Sponsor" : "Add New Sponsor"}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -200,35 +203,34 @@ export default function ExhibitorsPage({ params }) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="boothNumber">Booth Number *</Label>
-                      <Input
-                        id="boothNumber"
-                        value={formData.boothNumber}
-                        onChange={(e) => setFormData({ ...formData, boothNumber: e.target.value })}
-                        required
-                      />
+                      <Label htmlFor="level">Sponsorship Level</Label>
+                      <Select
+                        value={formData.level}
+                        onValueChange={(value) => setFormData({ ...formData, level: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Platinum">Platinum</SelectItem>
+                          <SelectItem value="Gold">Gold</SelectItem>
+                          <SelectItem value="Silver">Silver</SelectItem>
+                          <SelectItem value="Bronze">Bronze</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select
-                        value={formData.category}
-                        onValueChange={(value) => setFormData({ ...formData, category: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Technology">Technology</SelectItem>
-                          <SelectItem value="Healthcare">Healthcare</SelectItem>
-                          <SelectItem value="Finance">Finance</SelectItem>
-                          <SelectItem value="Education">Education</SelectItem>
-                          <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="amount">Amount</Label>
+                      <Input
+                        id="amount"
+                        type="number"
+                        step="0.01"
+                        value={formData.amount}
+                        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="status">Status</Label>
@@ -248,39 +250,31 @@ export default function ExhibitorsPage({ params }) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="size">Booth Size</Label>
-                      <Select
-                        value={formData.size}
-                        onValueChange={(value) => setFormData({ ...formData, size: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Small (3x3)">Small (3x3)</SelectItem>
-                          <SelectItem value="Medium (6x6)">Medium (6x6)</SelectItem>
-                          <SelectItem value="Large (9x9)">Large (9x9)</SelectItem>
-                          <SelectItem value="Extra Large (12x12)">Extra Large (12x12)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="image">Logo URL</Label>
-                      <Input
-                        id="image"
-                        value={formData.image}
-                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="image">Logo URL</Label>
+                    <Input
+                      id="image"
+                      value={formData.image}
+                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="benefits">Benefits</Label>
+                    <Textarea
+                      id="benefits"
+                      value={formData.benefits}
+                      onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+                      rows={3}
+                      placeholder="List the benefits included in this sponsorship package..."
+                    />
                   </div>
 
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type="submit">{editingExhibitor ? "Update" : "Create"} Exhibitor</Button>
+                    <Button type="submit">{editingSponsor ? "Update" : "Create"} Sponsor</Button>
                   </div>
                 </form>
               </DialogContent>
@@ -299,43 +293,60 @@ export default function ExhibitorsPage({ params }) {
               <TableRow>
                 <TableHead>Logo</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Booth Number</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead>Level</TableHead>
+                <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Booth Size</TableHead>
+                <TableHead>Benefits</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredExhibitors.map((exhibitor) => (
-                <TableRow key={exhibitor.id}>
+              {filteredSponsors.map((sponsor) => (
+                <TableRow key={sponsor.id}>
                   <TableCell>
                     <div className="w-10 h-10 rounded-full overflow-hidden">
                       <img
-                        src={exhibitor.image || "/placeholder.svg?height=40&width=40"}
-                        alt={exhibitor.name}
+                        src={sponsor.image || "/placeholder.jpg?height=40&width=40"}
+                        alt={sponsor.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{exhibitor.name}</TableCell>
-                  <TableCell>{exhibitor.boothNumber}</TableCell>
-                  <TableCell>{exhibitor.category || "N/A"}</TableCell>
+                  <TableCell className="font-medium">{sponsor.name}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
                       className={
-                        exhibitor.status === "Confirmed"
+                        sponsor.level === "Platinum"
+                          ? "bg-purple-100 text-purple-800 hover:bg-purple-100"
+                          : sponsor.level === "Gold"
+                            ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                            : sponsor.level === "Silver"
+                              ? "bg-gray-100 text-gray-800 hover:bg-gray-100"
+                              : "bg-amber-100 text-amber-800 hover:bg-amber-100"
+                      }
+                    >
+                      {sponsor.level || "N/A"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>${sponsor.amount?.toLocaleString() || "0"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={
+                        sponsor.status === "Confirmed"
                           ? "bg-green-100 text-green-800 hover:bg-green-100"
-                          : exhibitor.status === "Pending"
+                          : sponsor.status === "Pending"
                             ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
                             : "bg-red-100 text-red-800 hover:bg-red-100"
                       }
                     >
-                      {exhibitor.status || "N/A"}
+                      {sponsor.status || "N/A"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{exhibitor.size || "N/A"}</TableCell>
+                  <TableCell className="max-w-xs truncate" title={sponsor.benefits}>
+                    {sponsor.benefits || "N/A"}
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -344,11 +355,11 @@ export default function ExhibitorsPage({ params }) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(exhibitor)}>
+                        <DropdownMenuItem onClick={() => handleEdit(sponsor)}>
                           <Pencil className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(exhibitor.id)} className="text-red-600">
+                        <DropdownMenuItem onClick={() => handleDelete(sponsor.id)} className="text-red-600">
                           <Trash className="h-4 w-4 mr-2" />
                           Delete
                         </DropdownMenuItem>

@@ -61,7 +61,7 @@ export default async function SpeakersPage({ params }) {
                   <TableCell>
                     <div className="w-10 h-10 rounded-full overflow-hidden">
                       <img
-                        src={speaker.image || "/placeholder.svg"}
+                        src={speaker.image || "/placeholder.jpg"}
                         alt={speaker.name}
                         className="w-full h-full object-cover"
                       />

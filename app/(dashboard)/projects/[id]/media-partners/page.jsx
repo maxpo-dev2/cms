@@ -6,45 +6,42 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 
-export default function SponsorsPage({ params }) {
+export default function MediaPartnersPage({ params }) {
   const resolvedParams = React.use(params)
-  const [sponsors, setSponsors] = useState([])
+  const [mediaPartners, setMediaPartners] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingSponsor, setEditingSponsor] = useState(null)
+  const [editingMediaPartner, setEditingMediaPartner] = useState(null)
   const [formData, setFormData] = useState({
     name: "",
     image: "",
-    level: "",
-    amount: "",
-    status: "",
-    benefits: "",
+    website: "",
+    type: "",
+    priority: 0,
   })
   const { toast } = useToast()
 
   useEffect(() => {
-    fetchSponsors()
+    fetchMediaPartners()
   }, [])
 
-  const fetchSponsors = async () => {
+  const fetchMediaPartners = async () => {
     try {
-      const response = await fetch(`/api/projects/${resolvedParams.id}/sponsors`)
+      const response = await fetch(`/api/projects/${resolvedParams.id}/media-partners`)
       if (response.ok) {
         const data = await response.json()
-        setSponsors(data)
+        setMediaPartners(data)
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch sponsors",
+        description: "Failed to fetch media partners",
         variant: "destructive",
       })
     } finally {
@@ -55,11 +52,11 @@ export default function SponsorsPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingSponsor
-        ? `/api/projects/${resolvedParams.id}/sponsors/${editingSponsor.id}`
-        : `/api/projects/${resolvedParams.id}/sponsors`
+      const url = editingMediaPartner
+        ? `/api/projects/${resolvedParams.id}/media-partners/${editingMediaPartner.id}`
+        : `/api/projects/${resolvedParams.id}/media-partners`
 
-      const method = editingSponsor ? "PUT" : "POST"
+      const method = editingMediaPartner ? "PUT" : "POST"
 
       const response = await fetch(url, {
         method,
@@ -68,21 +65,21 @@ export default function SponsorsPage({ params }) {
         },
         body: JSON.stringify({
           ...formData,
-          amount: formData.amount ? Number.parseFloat(formData.amount) : 0,
+          priority: Number.parseInt(formData.priority) || 0,
         }),
       })
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: `Sponsor ${editingSponsor ? "updated" : "created"} successfully`,
+          description: `Media partner ${editingMediaPartner ? "updated" : "created"} successfully`,
         })
         setIsDialogOpen(false)
-        setEditingSponsor(null)
+        setEditingMediaPartner(null)
         resetForm()
-        fetchSponsors()
+        fetchMediaPartners()
       } else {
-        throw new Error("Failed to save sponsor")
+        throw new Error("Failed to save media partner")
       }
     } catch (error) {
       toast({
@@ -93,35 +90,34 @@ export default function SponsorsPage({ params }) {
     }
   }
 
-  const handleEdit = (sponsor) => {
-    setEditingSponsor(sponsor)
+  const handleEdit = (mediaPartner) => {
+    setEditingMediaPartner(mediaPartner)
     setFormData({
-      name: sponsor.name || "",
-      image: sponsor.image || "",
-      level: sponsor.level || "",
-      amount: sponsor.amount?.toString() || "",
-      status: sponsor.status || "",
-      benefits: sponsor.benefits || "",
+      name: mediaPartner.name || "",
+      image: mediaPartner.image || "",
+      website: mediaPartner.website || "",
+      type: mediaPartner.type || "",
+      priority: mediaPartner.priority || 0,
     })
     setIsDialogOpen(true)
   }
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this sponsor?")) return
+    if (!confirm("Are you sure you want to delete this media partner?")) return
 
     try {
-      const response = await fetch(`/api/projects/${resolvedParams.id}/sponsors/${id}`, {
+      const response = await fetch(`/api/projects/${resolvedParams.id}/media-partners/${id}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Sponsor deleted successfully",
+          description: "Media partner deleted successfully",
         })
-        fetchSponsors()
+        fetchMediaPartners()
       } else {
-        throw new Error("Failed to delete sponsor")
+        throw new Error("Failed to delete media partner")
       }
     } catch (error) {
       toast({
@@ -136,23 +132,20 @@ export default function SponsorsPage({ params }) {
     setFormData({
       name: "",
       image: "",
-      level: "",
-      amount: "",
-      status: "",
-      benefits: "",
+      website: "",
+      type: "",
+      priority: 0,
     })
   }
 
   const handleAddNew = () => {
-    setEditingSponsor(null)
+    setEditingMediaPartner(null)
     resetForm()
     setIsDialogOpen(true)
   }
 
-  const filteredSponsors = sponsors.filter(
-    (sponsor) =>
-      sponsor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sponsor.level?.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredMediaPartners = mediaPartners.filter((partner) =>
+    partner.name?.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   if (loading) {
@@ -162,7 +155,7 @@ export default function SponsorsPage({ params }) {
   return (
     <div className="container py-6 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Sponsors</h1>
+        <h1 className="text-2xl font-bold">Media Partners</h1>
 
         <div className="flex flex-col sm:flex-row justify-between gap-4">
           <div className="space-y-2 w-full sm:w-auto">
@@ -171,7 +164,7 @@ export default function SponsorsPage({ params }) {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by name or level"
+                placeholder="Search by name"
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -184,12 +177,12 @@ export default function SponsorsPage({ params }) {
               <DialogTrigger asChild>
                 <Button onClick={handleAddNew} className="gap-2">
                   <Plus className="h-4 w-4" />
-                  Add Sponsor
+                  Add Media Partner
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>{editingSponsor ? "Edit Sponsor" : "Add New Sponsor"}</DialogTitle>
+                  <DialogTitle>{editingMediaPartner ? "Edit Media Partner" : "Add New Media Partner"}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -203,19 +196,22 @@ export default function SponsorsPage({ params }) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="level">Sponsorship Level</Label>
+                      <Label htmlFor="type">Type</Label>
                       <Select
-                        value={formData.level}
-                        onValueChange={(value) => setFormData({ ...formData, level: value })}
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select level" />
+                          <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Platinum">Platinum</SelectItem>
-                          <SelectItem value="Gold">Gold</SelectItem>
-                          <SelectItem value="Silver">Silver</SelectItem>
-                          <SelectItem value="Bronze">Bronze</SelectItem>
+                          <SelectItem value="Newspaper">Newspaper</SelectItem>
+                          <SelectItem value="Magazine">Magazine</SelectItem>
+                          <SelectItem value="Online">Online</SelectItem>
+                          <SelectItem value="TV">TV</SelectItem>
+                          <SelectItem value="Radio">Radio</SelectItem>
+                          <SelectItem value="Blog">Blog</SelectItem>
+                          <SelectItem value="Podcast">Podcast</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -223,30 +219,23 @@ export default function SponsorsPage({ params }) {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="amount">Amount</Label>
+                      <Label htmlFor="website">Website</Label>
                       <Input
-                        id="amount"
-                        type="number"
-                        step="0.01"
-                        value={formData.amount}
-                        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                        id="website"
+                        type="url"
+                        value={formData.website}
+                        onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                        placeholder="https://example.com"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="status">Status</Label>
-                      <Select
-                        value={formData.status}
-                        onValueChange={(value) => setFormData({ ...formData, status: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Confirmed">Confirmed</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                          <SelectItem value="Cancelled">Cancelled</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="priority">Priority</Label>
+                      <Input
+                        id="priority"
+                        type="number"
+                        value={formData.priority}
+                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                      />
                     </div>
                   </div>
 
@@ -259,22 +248,11 @@ export default function SponsorsPage({ params }) {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="benefits">Benefits</Label>
-                    <Textarea
-                      id="benefits"
-                      value={formData.benefits}
-                      onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
-                      rows={3}
-                      placeholder="List the benefits included in this sponsorship package..."
-                    />
-                  </div>
-
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type="submit">{editingSponsor ? "Update" : "Create"} Sponsor</Button>
+                    <Button type="submit">{editingMediaPartner ? "Update" : "Create"} Media Partner</Button>
                   </div>
                 </form>
               </DialogContent>
@@ -293,60 +271,41 @@ export default function SponsorsPage({ params }) {
               <TableRow>
                 <TableHead>Logo</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Benefits</TableHead>
+                <TableHead>Website</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Priority</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredSponsors.map((sponsor) => (
-                <TableRow key={sponsor.id}>
+              {filteredMediaPartners.map((partner) => (
+                <TableRow key={partner.id}>
                   <TableCell>
                     <div className="w-10 h-10 rounded-full overflow-hidden">
                       <img
-                        src={sponsor.image || "/placeholder.svg?height=40&width=40"}
-                        alt={sponsor.name}
+                        src={partner.image || "/placeholder.jpg?height=40&width=40"}
+                        alt={partner.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{sponsor.name}</TableCell>
+                  <TableCell className="font-medium">{partner.name}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={
-                        sponsor.level === "Platinum"
-                          ? "bg-purple-100 text-purple-800 hover:bg-purple-100"
-                          : sponsor.level === "Gold"
-                            ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                            : sponsor.level === "Silver"
-                              ? "bg-gray-100 text-gray-800 hover:bg-gray-100"
-                              : "bg-amber-100 text-amber-800 hover:bg-amber-100"
-                      }
-                    >
-                      {sponsor.level || "N/A"}
-                    </Badge>
+                    {partner.website ? (
+                      <a
+                        href={partner.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {partner.website}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
                   </TableCell>
-                  <TableCell>${sponsor.amount?.toLocaleString() || "0"}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={
-                        sponsor.status === "Confirmed"
-                          ? "bg-green-100 text-green-800 hover:bg-green-100"
-                          : sponsor.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                            : "bg-red-100 text-red-800 hover:bg-red-100"
-                      }
-                    >
-                      {sponsor.status || "N/A"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate" title={sponsor.benefits}>
-                    {sponsor.benefits || "N/A"}
-                  </TableCell>
+                  <TableCell>{partner.type || "N/A"}</TableCell>
+                  <TableCell>{partner.priority}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -355,11 +314,11 @@ export default function SponsorsPage({ params }) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(sponsor)}>
+                        <DropdownMenuItem onClick={() => handleEdit(partner)}>
                           <Pencil className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(sponsor.id)} className="text-red-600">
+                        <DropdownMenuItem onClick={() => handleDelete(partner.id)} className="text-red-600">
                           <Trash className="h-4 w-4 mr-2" />
                           Delete
                         </DropdownMenuItem>

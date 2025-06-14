@@ -932,7 +932,7 @@ export default function AgendaPage() {
                                           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                                             {speaker.image ? (
                                               <img
-                                                src={speaker.image || "/placeholder.svg"}
+                                                src={speaker.image || "/placeholder.jpg"}
                                                 alt={speaker.name}
                                                 className="w-full h-full object-cover"
                                               />

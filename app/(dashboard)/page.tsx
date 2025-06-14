@@ -4,6 +4,7 @@ import { Bookmark, Plus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { getProjects } from "@/lib/db"
+import { ProjectCard } from "@/components/projects/projectCard"
 
 export default async function ProjectsPage() {
   let projects = []
@@ -58,7 +59,8 @@ export default async function ProjectsPage() {
                 key={project.id}
                 id={project.id}
                 name={project.name}
-                image={project.image || "/placeholder.svg?height=200&width=400"}
+                description={project.description}
+                image={project.image}
                 year={project.year}
               />
             ))}
@@ -69,23 +71,3 @@ export default async function ProjectsPage() {
   )
 }
 
-function ProjectCard({ id, name, image, year }: { id: string; name: string; image: string; year: string }) {
-  return (
-    <Card className="overflow-hidden">
-      <div className="relative h-48">
-        <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" />
-      </div>
-      <CardContent className="p-4">
-        <h3 className="font-semibold">{name}</h3>
-      </CardContent>
-      <CardFooter className="flex justify-between p-4 pt-0">
-        <Button variant="outline" size="icon" className="rounded-full h-8 w-8">
-          <Bookmark className="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/projects/${id}`}>{year}</Link>
-        </Button>
-      </CardFooter>
-    </Card>
-  )
-}

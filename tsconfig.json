@@ -34,7 +34,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/projects/[id]/app-reports/page.jsx",
+    "app/(dashboard)/projects/[id]/app-reports/page.jsx",
     "components/sidebar.jsx",
     "components/header.jsx"
   ],

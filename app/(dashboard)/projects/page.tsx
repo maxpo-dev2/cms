@@ -8,49 +8,49 @@ export default function ProjectsPage() {
     {
       id: 1,
       name: "Arab BioTech Summit",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 2,
       name: "Bio Technology Show",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 3,
       name: "Dubai EV Show",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 4,
       name: "Gemtech Forum",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 5,
       name: "Climate Technology Show",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 6,
       name: "London EV Show",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 7,
       name: "RAKIS",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
     {
       id: 8,
       name: "World Hydrogen Forum",
-      image: "/placeholder.svg?height=200&width=400",
+      image: "/placeholder.jpg?height=200&width=400",
       year: "2025",
     },
   ]
@@ -81,7 +81,7 @@ function ProjectCard({ name, image, year }: { name: string; image: string; year:
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48">
-        <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" />
+        <Image src={image || "/placeholder.jpg"} alt={name} fill className="object-cover" />
       </div>
       <CardContent className="p-4">
         <h3 className="font-semibold">{name}</h3>

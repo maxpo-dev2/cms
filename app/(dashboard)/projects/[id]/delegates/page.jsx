@@ -399,7 +399,7 @@ export default function DelegatesPage({ params }) {
                   <TableCell>
                     <div className="w-10 h-10 rounded-full overflow-hidden">
                       <img
-                        src={delegate.image || "/placeholder.svg?height=40&width=40"}
+                        src={delegate.image || "/placeholder.jpg?height=40&width=40"}
                         alt={delegate.name}
                         className="w-full h-full object-cover"
                       />

@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Bookmark, Plus, Loader2 } from "lucide-react"
 // import Image from "next/image"
 import Link from "next/link"
+import { ProjectCard } from "./projects/projectCard"
 
 function ProjectsLoading() {
   return (
@@ -18,28 +19,7 @@ function ProjectsLoading() {
   )
 }
 
-function ProjectCard({ id, name, year }: { id: string; name: string; year: string }) {
-  return (
-    <Card className="overflow-hidden">
-      <Link href={`/projects/${id}`}>
-        {/* <div className="relative h-48">
-          {/* <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" /> 
-        </div> */}
-        <CardContent className="p-4">
-          <h3 className="font-semibold">{name}</h3>
-        </CardContent>
-        <CardFooter className="flex justify-between p-4 pt-0">
-          <Button variant="outline" size="icon" className="rounded-full h-8 w-8">
-            <Bookmark className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <p>{year}</p>
-          </Button>
-        </CardFooter>
-      </Link>
-    </Card>
-  )
-}
+
 
 export function ProjectsList() {
   const [projects, setProjects] = useState<any[]>([])
@@ -85,7 +65,7 @@ export function ProjectsList() {
           key={project.id}
           id={project.id}
           name={project.name}
-        //   image={project.image || "/placeholder.svg?height=200&width=400"}
+          image={project.image }
           year={project.year}
         />
       ))}

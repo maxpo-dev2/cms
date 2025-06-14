@@ -20,7 +20,7 @@ export default async function ProjectDashboard({ params }) {
         <div className="w-full md:w-2/3 space-y-8">
           <div className="flex justify-center">
             <Image
-              src={project.image || "/placeholder.svg?height=100&width=400"}
+              src={project.image || "/placeholder.jpg?height=100&width=400"}
               alt={`${project.name} Logo`}
               width={400}
               height={100}

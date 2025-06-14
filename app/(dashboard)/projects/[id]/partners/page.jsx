@@ -6,42 +6,45 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
 import { Download, Pencil, Plus, Search, Trash, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 
-export default function MediaPartnersPage({ params }) {
+export default function PartnersPage({ params }) {
   const resolvedParams = React.use(params)
-  const [mediaPartners, setMediaPartners] = useState([])
+  const [partners, setPartners] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingMediaPartner, setEditingMediaPartner] = useState(null)
+  const [editingPartner, setEditingPartner] = useState(null)
   const [formData, setFormData] = useState({
     name: "",
     image: "",
-    website: "",
     type: "",
-    priority: 0,
+    website: "",
+    status: "",
+    contribution: "",
   })
   const { toast } = useToast()
 
   useEffect(() => {
-    fetchMediaPartners()
+    fetchPartners()
   }, [])
 
-  const fetchMediaPartners = async () => {
+  const fetchPartners = async () => {
     try {
-      const response = await fetch(`/api/projects/${resolvedParams.id}/media-partners`)
+      const response = await fetch(`/api/projects/${resolvedParams.id}/partners`)
       if (response.ok) {
         const data = await response.json()
-        setMediaPartners(data)
+        setPartners(data)
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch media partners",
+        description: "Failed to fetch partners",
         variant: "destructive",
       })
     } finally {
@@ -52,34 +55,31 @@ export default function MediaPartnersPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const url = editingMediaPartner
-        ? `/api/projects/${resolvedParams.id}/media-partners/${editingMediaPartner.id}`
-        : `/api/projects/${resolvedParams.id}/media-partners`
+      const url = editingPartner
+        ? `/api/projects/${resolvedParams.id}/partners/${editingPartner.id}`
+        : `/api/projects/${resolvedParams.id}/partners`
 
-      const method = editingMediaPartner ? "PUT" : "POST"
+      const method = editingPartner ? "PUT" : "POST"
 
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          priority: Number.parseInt(formData.priority) || 0,
-        }),
+        body: JSON.stringify(formData),
       })
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: `Media partner ${editingMediaPartner ? "updated" : "created"} successfully`,
+          description: `Partner ${editingPartner ? "updated" : "created"} successfully`,
         })
         setIsDialogOpen(false)
-        setEditingMediaPartner(null)
+        setEditingPartner(null)
         resetForm()
-        fetchMediaPartners()
+        fetchPartners()
       } else {
-        throw new Error("Failed to save media partner")
+        throw new Error("Failed to save partner")
       }
     } catch (error) {
       toast({
@@ -90,34 +90,35 @@ export default function MediaPartnersPage({ params }) {
     }
   }
 
-  const handleEdit = (mediaPartner) => {
-    setEditingMediaPartner(mediaPartner)
+  const handleEdit = (partner) => {
+    setEditingPartner(partner)
     setFormData({
-      name: mediaPartner.name || "",
-      image: mediaPartner.image || "",
-      website: mediaPartner.website || "",
-      type: mediaPartner.type || "",
-      priority: mediaPartner.priority || 0,
+      name: partner.name || "",
+      image: partner.image || "",
+      type: partner.type || "",
+      website: partner.website || "",
+      status: partner.status || "",
+      contribution: partner.contribution || "",
     })
     setIsDialogOpen(true)
   }
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this media partner?")) return
+    if (!confirm("Are you sure you want to delete this partner?")) return
 
     try {
-      const response = await fetch(`/api/projects/${resolvedParams.id}/media-partners/${id}`, {
+      const response = await fetch(`/api/projects/${resolvedParams.id}/partners/${id}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Media partner deleted successfully",
+          description: "Partner deleted successfully",
         })
-        fetchMediaPartners()
+        fetchPartners()
       } else {
-        throw new Error("Failed to delete media partner")
+        throw new Error("Failed to delete partner")
       }
     } catch (error) {
       toast({
@@ -132,20 +133,23 @@ export default function MediaPartnersPage({ params }) {
     setFormData({
       name: "",
       image: "",
-      website: "",
       type: "",
-      priority: 0,
+      website: "",
+      status: "",
+      contribution: "",
     })
   }
 
   const handleAddNew = () => {
-    setEditingMediaPartner(null)
+    setEditingPartner(null)
     resetForm()
     setIsDialogOpen(true)
   }
 
-  const filteredMediaPartners = mediaPartners.filter((partner) =>
-    partner.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredPartners = partners.filter(
+    (partner) =>
+      partner.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      partner.type?.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   if (loading) {
@@ -155,7 +159,7 @@ export default function MediaPartnersPage({ params }) {
   return (
     <div className="container py-6 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Media Partners</h1>
+        <h1 className="text-2xl font-bold">Partners</h1>
 
         <div className="flex flex-col sm:flex-row justify-between gap-4">
           <div className="space-y-2 w-full sm:w-auto">
@@ -164,7 +168,7 @@ export default function MediaPartnersPage({ params }) {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by name"
+                placeholder="Search by name or type"
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -177,12 +181,12 @@ export default function MediaPartnersPage({ params }) {
               <DialogTrigger asChild>
                 <Button onClick={handleAddNew} className="gap-2">
                   <Plus className="h-4 w-4" />
-                  Add Media Partner
+                  Add Partner
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>{editingMediaPartner ? "Edit Media Partner" : "Add New Media Partner"}</DialogTitle>
+                  <DialogTitle>{editingPartner ? "Edit Partner" : "Add New Partner"}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -205,13 +209,12 @@ export default function MediaPartnersPage({ params }) {
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Newspaper">Newspaper</SelectItem>
-                          <SelectItem value="Magazine">Magazine</SelectItem>
-                          <SelectItem value="Online">Online</SelectItem>
-                          <SelectItem value="TV">TV</SelectItem>
-                          <SelectItem value="Radio">Radio</SelectItem>
-                          <SelectItem value="Blog">Blog</SelectItem>
-                          <SelectItem value="Podcast">Podcast</SelectItem>
+                          <SelectItem value="Strategic">Strategic</SelectItem>
+                          <SelectItem value="Technology">Technology</SelectItem>
+                          <SelectItem value="Marketing">Marketing</SelectItem>
+                          <SelectItem value="Venue">Venue</SelectItem>
+                          <SelectItem value="Catering">Catering</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -229,13 +232,20 @@ export default function MediaPartnersPage({ params }) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="priority">Priority</Label>
-                      <Input
-                        id="priority"
-                        type="number"
-                        value={formData.priority}
-                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                      />
+                      <Label htmlFor="status">Status</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) => setFormData({ ...formData, status: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Active">Active</SelectItem>
+                          <SelectItem value="Inactive">Inactive</SelectItem>
+                          <SelectItem value="Pending">Pending</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
@@ -248,11 +258,22 @@ export default function MediaPartnersPage({ params }) {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label htmlFor="contribution">Contribution</Label>
+                    <Textarea
+                      id="contribution"
+                      value={formData.contribution}
+                      onChange={(e) => setFormData({ ...formData, contribution: e.target.value })}
+                      rows={3}
+                      placeholder="Describe what this partner contributes to the event..."
+                    />
+                  </div>
+
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type="submit">{editingMediaPartner ? "Update" : "Create"} Media Partner</Button>
+                    <Button type="submit">{editingPartner ? "Update" : "Create"} Partner</Button>
                   </div>
                 </form>
               </DialogContent>
@@ -271,25 +292,27 @@ export default function MediaPartnersPage({ params }) {
               <TableRow>
                 <TableHead>Logo</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Website</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Priority</TableHead>
+                <TableHead>Website</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Contribution</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredMediaPartners.map((partner) => (
+              {filteredPartners.map((partner) => (
                 <TableRow key={partner.id}>
                   <TableCell>
                     <div className="w-10 h-10 rounded-full overflow-hidden">
                       <img
-                        src={partner.image || "/placeholder.svg?height=40&width=40"}
+                        src={partner.image || "/placeholder.jpg?height=40&width=40"}
                         alt={partner.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{partner.name}</TableCell>
+                  <TableCell>{partner.type || "N/A"}</TableCell>
                   <TableCell>
                     {partner.website ? (
                       <a
@@ -304,8 +327,23 @@ export default function MediaPartnersPage({ params }) {
                       "N/A"
                     )}
                   </TableCell>
-                  <TableCell>{partner.type || "N/A"}</TableCell>
-                  <TableCell>{partner.priority}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={
+                        partner.status === "Active"
+                          ? "bg-green-100 text-green-800 hover:bg-green-100"
+                          : partner.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                            : "bg-red-100 text-red-800 hover:bg-red-100"
+                      }
+                    >
+                      {partner.status || "N/A"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-xs truncate" title={partner.contribution}>
+                    {partner.contribution || "N/A"}
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
