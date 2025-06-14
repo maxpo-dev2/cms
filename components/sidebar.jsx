@@ -33,28 +33,29 @@ export default function Sidebar() {
           href: "/",
           icon: <Home className="w-5 h-5" />,
         },
-      ],
-    },
-    {
-      title: "MASTER DATA",
-      items: [
-        {
-          title: "Organizations",
-          href: "/organizations",
-          icon: <LayoutDashboard className="w-5 h-5" />,
-        },
-        {
-          title: "Speakers",
-          href: "/speakers",
-          icon: <CircleUser className="w-5 h-5" />,
-        },
-        {
+         {
           title: "Logout",
           href: "/logout",
           icon: <LogOut className="w-5 h-5" />,
         },
       ],
     },
+    // {
+    //   title: "",
+      // items: [
+        // {
+        //   title: "Organizations",
+        //   href: "/organizations",
+        //   icon: <LayoutDashboard className="w-5 h-5" />,
+        // },
+        // {
+        //   title: "Speakers",
+        //   href: "/speakers",
+        //   icon: <CircleUser className="w-5 h-5" />,
+        // },
+       
+      // ],
+    // },
   ]
 
   // Only show these routes if we're in a project context
